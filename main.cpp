@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* Copyright Statement:
  *
  * This software/firmware and related documentation ("MediaTek Software") are
@@ -32,6 +33,28 @@
  * have been modified by MediaTek Inc. All revisions are subject to any receiver's
  * applicable license agreements with MediaTek Inc.
  */
+=======
+#include <QCoreApplication>
+#include <QFile>
+#include <QByteArray>
+#include <QDebug>
+#include <stdio.h>
+
+typedef struct _NvRamHeader
+{
+    unsigned int map_size;
+    unsigned int dat_size;
+    unsigned int ________;
+    unsigned int checksum;
+
+    //unsigned char map_file[4/*map_size*/];
+
+} NvRamHeader;
+
+typedef struct _NvImei {
+    unsigned int imei;
+}imei;
+>>>>>>> 89c53ae079565e472be83de32999f9643a598d43
 
 #include <ctype.h>
 #include <errno.h>
@@ -89,6 +112,7 @@ static int generator_imei_radom_value(unsigned char string[6]);
 
 static int read_imei_from_nvram(unsigned char  * data)
 {
+<<<<<<< HEAD
     char imei[IMEI_LEN] = { 0 };
     int i = 0 ;
 
@@ -122,6 +146,38 @@ static int read_imei_from_nvram(unsigned char  * data)
         NVM_CloseFileDesc(nvram_fd);
         return -1;
     }
+=======
+    QCoreApplication a(argc, argv);
+    const char *bin_file = "nvram.bin";
+    FILE *stream = fopen(bin_file, "rb");
+
+    quint64 byte_postion = 0x21000;
+    NvRamHeader header;
+    memset(&header, 0, sizeof(NvRamHeader));
+    fseek(stream, 0, SEEK_SET);
+    fread(&header, 1, sizeof(header), stream);
+
+    qInfo() << "Header Map size: " << header.dat_size;
+
+    fclose(stream);
+
+    QFile file("nvram_1.bin");
+    file.open(QIODevice::ReadWrite);
+    file.seek(byte_postion);
+
+    QByteArray buffer =  file.read(12);
+
+    QByteArray hex_to;
+    hex_to.fromHex(buffer);
+    hex_to.mid(0x2).left(2);
+
+
+    qInfo() << buffer;
+
+    qInfo() << hex_to;
+
+    file.close();
+>>>>>>> 89c53ae079565e472be83de32999f9643a598d43
 
     lseek(nvram_fd.iFileDesc,0, 0);
 
